@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบริการออนไลน์ - หน้าหลัก</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #611414; /* สีน้ำตาลแดงเข้มหรูหรา */
+            --accent-gold: #d49a24;    /* สีทองเน้นความโดดเด่น */
+            --bg-light: #faf7f2;       /* สีพื้นหลังโทนอุ่นนุ่มตา */
+            --text-dark: #2c2c2c;
+            --white: #ffffff;
+            --shadow: 0 4px 18px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: #f5f6f9;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- 1. แถบบนสุด (Top Bar) --- */
+        .top-bar {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 8px 6%;
+            font-size: 0.88rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+
+        .top-bar-right {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .top-bar-right a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .top-bar-right a:hover {
+            color: var(--accent-gold);
+        }
+
+        /* --- 2. แถบเมนูหลัก (Main Navbar) --- */
+        .navbar {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            padding: 0 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .brand i {
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+        }
+
+        /* เมนูมุมขวา (สามารถก๊อปปี้เพิ่มปุ่มได้ง่ายๆ) */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 22px 18px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.98rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-item:hover > .nav-link {
+            color: var(--primary-color);
+            background-color: rgba(97, 20, 20, 0.04);
+        }
+
+        /* เมนูย่อยแบบ Dropdown */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--white);
+            min-width: 240px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border-radius: 0 0 10px 10px;
+            border-top: 3px solid var(--accent-gold);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 0.93rem;
+            border-bottom: 1px solid #f2f2f2;
+            transition: background 0.2s, padding-left 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            padding-left: 26px;
+        }
+
+        /* --- 3. แบนเนอร์หน้าหลัก (Banner Section) --- */
+        .hero-banner {
+            background: linear-gradient(135deg, #fdf4e3 0%, #f7e4bd 100%);
+            padding: 60px 5%;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-gold);
+            position: relative;
+        }
+
+        .banner-card {
+            max-width: 850px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            padding: 45px 30px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            border: 2px solid #eed6a6;
+        }
+
+        .banner-card h1 {
+            font-size: 3.2rem;
+            color: #c62828;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .banner-card .sub-title {
+            display: inline-block;
+            background-color: #c62828;
+            color: var(--white);
+            font-size: 1.4rem;
+            padding: 8px 30px;
+            border-radius: 50px;
+            margin: 15px 0 20px 0;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(198, 40, 40, 0.3);
+        }
+
+        .banner-card p {
+            color: #444;
+            font-size: 1.15rem;
+            font-weight: 400;
+        }
+
+        /* --- 4. ส่วนปุ่มบริการ (E-Services Grid) --- */
+        .services-section {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            margin-bottom: 35px;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 8px;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60%;
+            height: 4px;
+            background-color: var(--accent-gold);
+            border-radius: 2px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* การ์ดบริการ (เมื่อกดจะเรียก Modal เพื่อเลือกปุ่มย่อย) */
+        .service-card {
+            background: var(--white);
+            border-radius: 18px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.35s ease;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+            border-color: var(--accent-gold);
+        }
+
+        .service-icon {
+            width: 75px;
+            height: 75px;
+            background-color: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--primary-color);
+            font-size: 2rem;
+            transition: 0.3s;
+        }
+
+        .service-card:hover .service-icon {
+            background-color: var(--primary-color);
+            color: var(--white);
+            transform: scale(1.08);
+        }
+
+        .service-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* --- 5. Modal หน้าต่างป๊อบอัพสำหรับเลือกปุ่มย่อย --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s ease;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: var(--white);
+            width: 90%;
+            max-width: 480px;
+            border-radius: 20px;
+            padding: 35px 30px;
+            position: relative;
+            transform: scale(0.85);
+            transition: 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #aaa;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #d32f2f;
+        }
+
+        .modal-title {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.35rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .sub-buttons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sub-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 22px;
+            background-color: #f9fafb;
+            border: 1.5px solid #eaeaea;
+            border-radius: 12px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.25s ease;
+        }
+
+        .sub-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+            transform: translateX(6px);
+        }
+
+        /* Responsive สำหรับมือถือ */
+        @media (max-width: 768px) {
+            .top-bar { flex-direction: column; text-align: center; }
+            .navbar { flex-direction: column; padding: 15px; }
+            .nav-menu { flex-wrap: wrap; justify-content: center; }
+            .banner-card h1 { font-size: 2.2rem; }
+            .banner-card .sub-title { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. แถบแจ้งข่าวบนสุด -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <span><i class="fa-solid fa-bullhorn" style="color: var(--accent-gold);"></i> #ถิ่นนี้สร้างคนดีคืนสู่สังคม</span>
+        </div>
+        <ul class="top-bar-right">
+            <li><a href="#"><i class="fa-solid fa-circle-info"></i> ข้อมูลองค์กร</a></li>
+            <li><a href="#"><i class="fa-solid fa-gavel"></i> กฎหมาย</a></li>
+            <li><a href="#"><i class="fa-solid fa-envelope"></i> ติดต่อเรา</a></li>
+        </ul>
+    </div>
+
+    <!-- 2. เมนูหลักทางขวา (Navbar) -->
+    <nav class="navbar">
+        <a href="#" class="brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>บริการออนไลน์</span>
+        </a>
+
+        <!-- ========================================================
+             วิธีเพิ่มปุ่มเมนูมุมขวา: ก๊อปปี้ <li>...</li> ด้านล่างเพื่อเพิ่มปุ่มใหม่
+             ======================================================== -->
+        <ul class="nav-menu">
+            <!-- ปุ่มธรรมดา -->
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fa-solid fa-house"></i> หน้าหลัก</a>
+            </li>
+
+            <!-- ปุ่มแบบมีเมนูย่อย Dropdown -->
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fa-solid fa-bullhorn"></i> ข่าวประชาสัมพันธ์ 
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-item"><span>ข่าวประกาศทั่วไป</span> <i class="fa-solid fa-chevron-right"></i></a>
+                    <a href="#" class="dropdown-item"><span>ข่าวจัดซื้อจัดจ้าง</span> <i class="fa-solid fa-chevron-right"></i></a>
+                    <a href="#" class="dropdown-item"><span>ข่าวรับสมัครงาน</span> <i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fa-solid fa-images"></i> ภาพกิจกรรม</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fa-solid fa-download"></i> ดาวน์โหลด</a>
+            </li>
+
+            <!-- ตัวอย่างปุ่มเปิดอนาคต (เพิ่มได้ตรงนี้) -->
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fa-solid fa-trophy"></i> ผลงาน</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 3. แบนเนอร์หน้าหลัก -->
+    <section class="hero-banner">
+        <div class="banner-card">
+            <h1>NO GIFT POLICY</h1>
+            <div class="sub-title">งดรับ งดให้ ของขวัญหรือของกำนัล</div>
+            <p>ส่งเสริมวัฒนธรรมองค์กรที่โปร่งใส เป็นธรรม และตรวจสอบได้</p>
+        </div>
+    </section>
+
+    <!-- 4. ส่วนบริการ E-Services (เมื่อกดจะขึ้นหน้าต่างให้เลือกอีกปุ่ม) -->
+    <section class="services-section">
+        <div class="section-header">
+            <h2>HWP E-Service บริการออนไลน์</h2>
+        </div>
+
+        <div class="services-grid">
+            
+            <!-- การ์ดที่ 1: ระบบสารสนเทศ -->
+            <div class="service-card" onclick="openModal('ระบบสารสนเทศ', [
+                { title: 'ระบบสารสนเทศนักเรียน', url: '#' },
+                { title: 'ระบบสารสนเทศครูและบุคลากร', url: '#' },
+                { title: 'ระบบเช็คเวลาเรียนออนไลน์', url: '#' }
+            ])">
+                <div class="service-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                <div class="service-title">ระบบสารสนเทศ</div>
+            </div>
+
+            <!-- การ์ดที่ 2: กิจกรรมชุมนุม -->
+            <div class="service-card" onclick="openModal('กิจกรรมชุมนุม', [
+                { title: 'ลงทะเบียนชุมนุมประจำปี', url: '#' },
+                { title: 'ตรวจสอบรายชื่อผู้เรียนชุมนุม', url: '#' },
+                { title: 'ประเมินผลกิจกรรมชุมนุม', url: '#' }
+            ])">
+                <div class="service-icon"><i class="fa-solid fa-people-group"></i></div>
+                <div class="service-title">กิจกรรมชุมนุม</div>
+            </div>
+
+            <!-- การ์ดที่ 3: ระบบชำระเงิน -->
+            <div class="service-card" onclick="openModal('ระบบชำระค่าบำรุงการศึกษาออนไลน์', [
+                { title: 'ชำระเงินค่าบำรุงการศึกษา', url: '#' },
+                { title: 'พิมพ์ใบเสร็จรับเงินออนไลน์', url: '#' },
+                { title: 'ตรวจสอบสถานะการชำระเงิน', url: '#' }
+            ])">
+                <div class="service-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                <div class="service-title">ระบบชำระค่าบำรุงการศึกษาออนไลน์</div>
+            </div>
+
+            <!-- ========================================================
+                 วิธีเพิ่มปุ่มการ์ดบริการใหม่ในอนาคต:
+                 ก๊อปปี้บล็อก div class="service-card" แล้วเปลี่ยนชื่อและปุ่มย่อยตามต้องการ
+                 ======================================================== -->
+
+        </div>
+    </section>
+
+    <!-- 5. Popup Modal สำหรับแสดงตัวเลือกปุ่มย่อย -->
+    <div class="modal-overlay" id="subOptionModal">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 class="modal-title" id="modalTitle">เลือกรายการบริการ</h3>
+            <div class="sub-buttons-list" id="modalButtonsList">
+                <!-- รายการปุ่มย่อยจะถูกใส่เข้ามาด้วย JavaScript dynamic -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript สำหรับควบคุมระบบปุ่มเปิด-ปิด Modal -->
+    <script>
+        function openModal(title, options) {
+            document.getElementById('modalTitle').innerText = title;
+            const buttonsContainer = document.getElementById('modalButtonsList');
+            buttonsContainer.innerHTML = ''; 
+
+            options.forEach(item => {
+                const a = document.createElement('a');
+                a.href = item.url;
+                a.className = 'sub-btn';
+                a.innerHTML = `<span>${item.title}</span> <i class="fa-solid fa-circle-chevron-right"></i>`;
+                buttonsContainer.appendChild(a);
+            });
+
+            document.getElementById('subOptionModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('subOptionModal').classList.remove('active');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('subOptionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
