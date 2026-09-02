@@ -1003,6 +1003,13 @@
             const prefixStr = p.prefix ? p.prefix : '';
             const fullName = `${prefixStr} ${p.first_name} ${p.last_name}`;
             const status = p.attendance_status || (p.checked_in ? 'มา' : 'ขาด');
+                 // 1. เปลี่ยน UI หน้าจอทันที ไม่ต้องรีโหลด
+      if (newStatus) {
+        btn.className = "px-4 py-1.5 rounded-xl border text-xs cursor-pointer btn-checkin-on";
+        btn.innerHTML = "✓ มาแล้ว";
+      } else {
+        btn.className = "px-4 py-1.5 rounded-xl border text-xs cursor-pointer btn-checkin-off";
+        btn.innerHTML = "ยังไม่มา";
             participantsRows += `
               <tr class="border-b border-gray-100 hover:bg-gray-50 text-sm">
                 <td class="p-3 text-center text-gray-500">${pIndex + 1}</td>
