@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> R-SA SMART HWP1 </title>
+  <title> R-SA SMART HWP </title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -764,9 +764,14 @@
 
     async function loadCheckinData() {
       try {
-        const { data, error } = await supabaseClient.from('attendance_status').select('*').order('created_at', { ascending: true });
-        if (error) throw error;
-        checkinListData = data || [];
+        let { data, error } = await supabaseClient.from('attendance_status').select('*').order('created_at', { ascending: true });
+        
+        if (error || !data || data.length === 0) {
+          const res = await supabaseClient.from('participants').select('*').order('created_at', { ascending: true });
+          data = res.data || [];
+        }
+
+        checkinListData = data;
         renderCheckinList();
       } catch (err) {
         console.error(err);
@@ -831,12 +836,18 @@
     async function setAttendance(id, status) {
       try {
         const isChecked = (status === 'มา' || status === 'สาย');
-        const { error } = await supabaseClient.from('attendance_status').update({ 
+        
+        let { error } = await supabaseClient.from('attendance_status').update({ 
           attendance_status: status,
           checked_in: isChecked
         }).eq('id', id);
         
-        if (error) throw error;
+        if (error) {
+          await supabaseClient.from('participants').update({ 
+            attendance_status: status,
+            checked_in: isChecked
+          }).eq('id', id);
+        }
         
         const target = checkinListData.find(item => String(item.id) === String(id));
         if (target) {
@@ -849,15 +860,20 @@
       }
     }
 
-    async function deleteParticipant(id, fullName) {
+    async function deleteParticipant(id, fullName, activityId = null) {
       if (!confirm(`⚠️ คุณแน่ใจหรือไม่ที่จะลบรายชื่อ "${fullName}" ออกจากระบบ?`)) return;
 
       try {
-        const { error } = await supabaseClient.from('attendance_status').delete().eq('id', id);
-        if (error) throw error;
+        let { error } = await supabaseClient.from('attendance_status').delete().eq('id', id);
+        await supabaseClient.from('participants').delete().eq('id', id);
 
         alert("🗑️ ลบรายชื่อสำเร็จ!");
-        loadCheckinData();
+        
+        if (activityId) {
+          loadAdminDetail(activityId);
+        } else {
+          loadCheckinData();
+        }
       } catch (err) {
         alert("❌ ไม่สามารถลบรายชื่อได้: " + err.message);
       }
@@ -893,8 +909,10 @@
       };
 
       try {
-        const { error } = await supabaseClient.from('attendance_status').insert([newPerson]);
-        if (error) throw error;
+        let { error } = await supabaseClient.from('attendance_status').insert([newPerson]);
+        if (error) {
+          await supabaseClient.from('participants').insert([newPerson]);
+        }
         
         alert("➕ เพิ่มรายชื่อเรียบร้อยแล้ว!");
         closeAddModal();
@@ -911,7 +929,6 @@
         if (actError) throw actError;
 
         const { data: participants, error: partError } = await supabaseClient.from('participants').select('*');
-        if (partError) throw partError;
 
         const container = document.getElementById('admin-activity-grid');
         container.innerHTML = '';
@@ -924,7 +941,7 @@
 
         activities.forEach(act => {
           activeActivitiesData[act.id] = act;
-          const count = participants.filter(p => String(p.activity_id) === String(act.id)).length;
+          const count = participants ? participants.filter(p => String(p.activity_id) === String(act.id)).length : 0;
           const imgUrl = act.image_url || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';
 
           container.innerHTML += `
@@ -973,26 +990,31 @@
         if (actError) throw actError;
 
         const { data: participants, error: partError } = await supabaseClient.from('participants').select('*').eq('activity_id', activityId);
-        if (partError) throw partError;
 
         const container = document.getElementById('admin-detail-container');
-        const count = participants.length;
+        const count = participants ? participants.length : 0;
         const imgUrl = act.image_url || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';
 
         let participantsRows = '';
         if (count === 0) {
-          participantsRows = `<tr><td colspan="5" class="p-6 text-center text-gray-400 text-sm">ยังไม่มีผู้สมัครในกิจกรรมนี้</td></tr>`;
+          participantsRows = `<tr><td colspan="6" class="p-6 text-center text-gray-400 text-sm">ยังไม่มีผู้สมัครในกิจกรรมนี้</td></tr>`;
         } else {
           participants.forEach((p, pIndex) => {
             const prefixStr = p.prefix ? p.prefix : '';
+            const fullName = `${prefixStr} ${p.first_name} ${p.last_name}`;
             const status = p.attendance_status || (p.checked_in ? 'มา' : 'ขาด');
             participantsRows += `
               <tr class="border-b border-gray-100 hover:bg-gray-50 text-sm">
                 <td class="p-3 text-center text-gray-500">${pIndex + 1}</td>
-                <td class="p-3 font-medium text-gray-900">${prefixStr} ${p.first_name} ${p.last_name}</td>
+                <td class="p-3 font-medium text-gray-900">${fullName}</td>
                 <td class="p-3 text-center font-semibold text-blue-600">${status}</td>
                 <td class="p-3 text-gray-600">📱 ${p.phone}</td>
                 <td class="p-3 text-gray-600">🏫 ${p.school || '-'}</td>
+                <td class="p-3 text-center">
+                  <button onclick="deleteParticipant('${p.id}', '${fullName}', '${activityId}')" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition" title="ลบรายชื่อ">
+                    🗑️ ลบ
+                  </button>
+                </td>
               </tr>
             `;
           });
@@ -1034,6 +1056,7 @@
                       <th class="p-3 text-center">สถานะ</th>
                       <th class="p-3">เบอร์โทรศัพท์</th>
                       <th class="p-3">ระดับชั้นปีการศึกษา</th>
+                      <th class="p-3 text-center">จัดการ</th>
                     </tr>
                   </thead>
                   <tbody>${participantsRows}</tbody>
