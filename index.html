@@ -879,9 +879,10 @@
       const school = document.getElementById('modal-school').value.trim() || 'ม.5/3';
       const phone = document.getElementById('modal-phone').value.trim() || '-';
 
+      const selectedActivity = document.getElementById('checkin-activity-select') ? document.getElementById('checkin-activity-select').value : 'เช็คชื่อบุคลากร';
       const newPerson = {
         activity_id: Object.keys(activeActivitiesData)[0] || null,
-        event_topicc: 'เช็คชื่อบุคลากร',
+        event_topic: selectedActivity,
         prefix: prefix,
         first_name: firstName,
         last_name: lastName,
