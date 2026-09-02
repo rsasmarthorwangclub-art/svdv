@@ -423,6 +423,7 @@
 
     </main>
 
+    <!-- Modal เพิ่มรายชื่อบุคลากร -->
     <div id="add-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
       <div class="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl space-y-6 text-gray-800">
         <div class="flex justify-between items-center border-b pb-4">
@@ -471,6 +472,50 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal หน้าต่างแก้ไขข้อมูลกิจกรรม -->
+    <div id="edit-activity-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl space-y-6 text-gray-800">
+        <div class="flex justify-between items-center border-b pb-4">
+          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span>✏️</span> แก้ไขข้อมูลกิจกรรม
+          </h3>
+          <button onclick="closeEditActivityModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">✕</button>
+        </div>
+
+        <form id="editActivityForm" onsubmit="handleSaveEditActivity(event)" class="space-y-4">
+          <input type="hidden" id="edit-act-id">
+          
+          <div>
+            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">ชื่อกิจกรรมหลัก *</label>
+            <input type="text" id="edit-act-title" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-blue-500">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">วันที่จัดกิจกรรม</label>
+              <input type="text" id="edit-act-date" placeholder="เช่น 12 - 16 ต.ค. 69" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">สถานที่</label>
+              <input type="text" id="edit-act-location" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm outline-none focus:border-blue-500">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">เปลี่ยนรูปภาพหน้าปก (ออปชันเสริม)</label>
+            <input type="file" id="edit-act-image-file" accept="image/*" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm outline-none file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            <p class="text-xs text-gray-400 mt-1">* หากไม่เลือกไฟล์ใหม่ ระบบจะใช้รูปภาพเดิม</p>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" onclick="closeEditActivityModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition text-sm">ยกเลิก</button>
+            <button type="submit" id="edit-submit-btn" class="w-1/2 btn-primary-custom text-white font-bold py-3 rounded-xl shadow-lg transition text-sm">บันทึกการแก้ไข</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -676,7 +721,7 @@
     }
 
     async function deleteActivity(activityId, activityTitle) {
-      if (!confirm(`⚠️ คุณแน่ใจหรือไม่ที่จะลบกิจกรรม "${activityTitle}"?\nการกระทำนี้จะลบข้อมูลผู้สมัครทั้งหมดในกิจกรรมนี้ด้วย!`)) return;
+      if (!confirm(`⚠️ คุณแน่ใจหรือไม่ที่จะลบกิจกรรม "${decodeURIComponent(activityTitle)}"?\nการกระทำนี้จะลบข้อมูลผู้สมัครทั้งหมดในกิจกรรมนี้ด้วย!`)) return;
 
       try {
         await supabaseClient.from('participants').delete().eq('activity_id', activityId);
@@ -899,13 +944,18 @@
                   <p class="flex items-center gap-2"><span>📍</span> ${act.location || 'ไม่ระบุสถานที่'}</p>
                 </div>
               </div>
-              <div class="p-5 pt-0 grid grid-cols-2 gap-2">
-                <button onclick="switchTab('admin-detail', '${act.id}')" class="btn-primary-custom text-white py-3 rounded-xl text-sm font-bold shadow text-center">
+              <div class="p-5 pt-0 space-y-2">
+                <button onclick="switchTab('admin-detail', '${act.id}')" class="w-full btn-primary-custom text-white py-2.5 rounded-xl text-sm font-bold shadow text-center">
                   📂 จัดการรายชื่อ
                 </button>
-                <button onclick="deleteActivity('${act.id}', '${encodeURIComponent(act.title)}')" class="bg-red-100 hover:bg-red-200 text-red-600 py-3 rounded-xl text-sm font-bold transition text-center">
-                  🗑️ ลบกิจกรรม
-                </button>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="openEditActivityModal('${act.id}')" class="bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl text-xs font-bold transition text-center shadow">
+                    ✏️ แก้ไขกิจกรรม
+                  </button>
+                  <button onclick="deleteActivity('${act.id}', '${encodeURIComponent(act.title)}')" class="bg-red-100 hover:bg-red-200 text-red-600 py-2 rounded-xl text-xs font-bold transition text-center">
+                    🗑️ ลบกิจกรรม
+                  </button>
+                </div>
               </div>
             </div>
           `;
@@ -962,6 +1012,9 @@
                   <div class="bg-blue-600 text-white font-bold px-4 py-2 rounded-xl text-sm shadow">
                     👥 ผู้สมัครทั้งหมด: <span class="text-lg">${count}</span> คน
                   </div>
+                  <button onclick="openEditActivityModal('${act.id}')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-sm shadow transition flex items-center gap-1.5">
+                    ✏️ แก้ไขกิจกรรม
+                  </button>
                   <button onclick="exportToExcel('${act.id}', '${encodeURIComponent(act.title)}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-sm shadow transition flex items-center gap-1.5">
                     📊 โหลด Excel
                   </button>
@@ -991,6 +1044,79 @@
       } catch (err) {
         console.log(err);
         document.getElementById('admin-detail-container').innerHTML = `<p class="text-white text-center">เกิดข้อผิดพลาดในการโหลดข้อมูลกิจกรรม</p>`;
+      }
+    }
+
+    async function openEditActivityModal(activityId) {
+      try {
+        const { data: act, error } = await supabaseClient.from('activities').select('*').eq('id', activityId).single();
+        if (error) throw error;
+
+        document.getElementById('edit-act-id').value = act.id;
+        document.getElementById('edit-act-title').value = act.title || '';
+        document.getElementById('edit-act-date').value = act.event_date || '';
+        document.getElementById('edit-act-location').value = act.location || '';
+        document.getElementById('edit-act-image-file').value = '';
+
+        document.getElementById('edit-activity-modal').classList.remove('hidden');
+      } catch (err) {
+        alert("❌ ไม่สามารถดึงข้อมูลกิจกรรมมาแก้ไขได้: " + err.message);
+      }
+    }
+
+    function closeEditActivityModal() {
+      document.getElementById('edit-activity-modal').classList.add('hidden');
+    }
+
+    async function handleSaveEditActivity(e) {
+      e.preventDefault();
+      const activityId = document.getElementById('edit-act-id').value;
+      const submitBtn = document.getElementById('edit-submit-btn');
+
+      submitBtn.innerText = "⏳ กำลังบันทึก...";
+      submitBtn.disabled = true;
+
+      try {
+        const fileInput = document.getElementById('edit-act-image-file');
+        const file = fileInput.files[0];
+        let publicImageUrl = null;
+
+        if (file) {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+          const { error: uploadError } = await supabaseClient.storage.from('activity-images').upload(fileName, file);
+          if (uploadError) throw uploadError;
+          const { data: publicURLData } = supabaseClient.storage.from('activity-images').getPublicUrl(fileName);
+          publicImageUrl = publicURLData.publicUrl;
+        }
+
+        const updateData = {
+          title: document.getElementById('edit-act-title').value,
+          event_date: document.getElementById('edit-act-date').value,
+          location: document.getElementById('edit-act-location').value
+        };
+
+        if (publicImageUrl) {
+          updateData.image_url = publicImageUrl;
+        }
+
+        const { error: updateError } = await supabaseClient.from('activities').update(updateData).eq('id', activityId);
+        if (updateError) throw updateError;
+
+        alert("✨ แก้ไขข้อมูลกิจกรรมสำเร็จ!");
+        closeEditActivityModal();
+
+        const currentTab = document.querySelector('#sec-admin-detail:not(.hidden)') ? 'admin-detail' : 'admin';
+        if (currentTab === 'admin-detail') {
+          loadAdminDetail(activityId);
+        } else {
+          loadAdminDashboard();
+        }
+      } catch (err) {
+        alert("❌ ไม่สามารถบันทึกข้อมูลได้: " + err.message);
+      } finally {
+        submitBtn.innerText = "บันทึกการแก้ไข";
+        submitBtn.disabled = false;
       }
     }
 
