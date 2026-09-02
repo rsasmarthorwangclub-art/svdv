@@ -3,47 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบศูนย์รวมกิbจกรรมจิตอาสา</title>
-
-  <!-- 
-    ==========================================================================
-    📌 EXTERNAL LIBRARIES & FONTS
-    - Font Awesome: ไอคอน (เช่น รูปหัวใจ, โทรศัพท์, ฟันเฟือง)
-    - Google Fonts: ฟอนต์ภาษาไทย "Sarabun"
-    - Supabase JS Client: ตัวเชื่อมต่อฐานข้อมูล Supabase เข้ากับ JavaScript
-    ==========================================================================
-  -->
+  <title>ระบบศูนย์รวมกิจกรรมจิตอาสา</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- 
-    ==========================================================================
-    🎨 SECTION 1: STYLESHEET (CSS)
-    การกำหนดรูปแบบการแสดงผล หน้าตา สีสัน และอนิเมชันของเว็บไซต์
-    ==========================================================================
-  -->
   <style>
-    /* 
-      1.1 CSS VARIABLES (:root)
-      - จุดสำหรับกำหนดตัวแปรสีฟ้าทั้งหมดของเว็บ 
-      - หากต้องการเปลี่ยนสีเว็บในอนาคต ให้มาแก้รหัสสีที่จุดนี้จุดเดียว (ไม่ต้องตามแก้ทีละจุด)
-    */
-    :root {
-      --primary-dark: #0f4c81;   /* สีฟ้าเข้ม (ใช้กับ แถบบนสุด และข้อความหัวข้อ) */
-      --primary-main: #1e88e5;   /* สีฟ้าหลัก (ใช้กับ ปุ่ม, ไอคอน, และเส้นขอบ) */
-      --primary-light: #e3f2fd;  /* สีฟ้าอ่อน (ใช้กับ พื้นหลังไอคอน และเอฟเฟกต์ Hover) */
-      --accent-blue: #0288d1;    /* สีฟ้าเน้น */
-      --bg-main: #f4f8fb;        /* สีพื้นหลังรวมของหน้าเว็บ (ฟ้าอมเทาอ่อนๆ) */
-      --text-dark: #1e293b;      /* สีตัวอักษรหลัก (น้ำเงินเข้มเกือบดำ) */
-      --text-muted: #64748b;     /* สีตัวอักษรรอง/ข้อความคำอธิบาย */
-      --white: #ffffff;          /* สีขาว */
-      --radius-sm: 8px;          /* ความโค้งมนระดับเล็ก */
-      --radius-md: 12px;         /* ความโค้งมนระดับกลาง */
-      --transition: all 0.25s ease; /* ความลื่นไหลในการแสดงผลเอฟเฟกต์ */
-    }
-
-    /* 1.2 RESET RULES: ล้างค่าระยะขอบเดิมของเบราว์เซอร์ และกำหนดฟอนต์ Sarabun */
     * {
       margin: 0;
       padding: 0;
@@ -51,67 +13,63 @@
       font-family: 'Sarabun', system-ui, -apple-system, sans-serif;
     }
 
+    :root {
+      --primary-dark: #0f4c81;
+      --primary: #1e88e5;
+      --primary-light: #e3f2fd;
+      --accent-blue: #0288d1;
+      --bg-light: #f4f8fb;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
     body {
-      background-color: var(--bg-main);
-      color: var(--text-dark);
+      background-color: var(--bg-light);
+      color: var(--text-main);
     }
 
-    /* กรอบจัดระเบียบความกว้างให้อยู่ตรงกลางหน้าจอ */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* 
-      1.3 TOP BAR (แถบสีฟ้าเข้มบนสุด)
-      - แสดงสโลแกน และข้อมูลติดต่อ
-    */
+    /* Top Slogan Bar */
     .top-bar {
       background-color: var(--primary-dark);
-      color: var(--white);
-      padding: 8px 0;
+      color: #ffffff;
+      padding: 8px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 14px;
     }
 
-    .top-bar-content {
-      display: flex;
-      justify-content: space-between; /* จัดข้อความซ้าย-ขวาออกจากกัน */
-      align-items: center;
-    }
-
-    /* 
-      1.4 NAVBAR & NAVIGATION MENU (แถบเมนูหลักมุมขวาบน)
-      - ล็อกแถบเมนูให้ติดอยู่ด้านบนเสมอแม้จะเลื่อนหน้าลงมา (sticky)
-    */
-    .navbar {
-      background: var(--white);
-      box-shadow: 0 4px 12px rgba(15, 76, 129, 0.08); /* เงาสีฟ้าบางๆ ใต้แถบเมนู */
+    /* Navigation Header */
+    header {
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(15, 76, 129, 0.08);
       position: sticky;
       top: 0;
-      z-index: 1000; /* ให้อยู่เหนือชั้นองค์ประกอบอื่นเสมอ */
+      z-index: 1000;
     }
 
     .nav-container {
       display: flex;
-      justify-content: space-between; /* แยกโลโก้อยู่ซ้าย และเมนูอยู่ออกไปทางขวา */
+      justify-content: space-between;
       align-items: center;
-      padding: 12px 20px;
+      padding: 12px 5%;
     }
 
-    /* ตกแต่งโลโก้ฝั่งซ้าย */
     .logo {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
+      color: var(--primary-dark);
+      font-weight: bold;
+      font-size: 1.25rem;
     }
 
     .logo-icon {
       width: 45px;
       height: 45px;
       background: var(--primary-light);
-      color: var(--primary-main);
+      color: var(--primary);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -119,72 +77,54 @@
       font-size: 1.4rem;
     }
 
-    .logo-text .title {
-      display: block;
-      font-weight: bold;
-      color: var(--primary-dark);
-      font-size: 1.1rem;
-    }
-
-    .logo-text .subtitle {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    /* รายการเมนูนำทาง (Nav Menu) */
+    /* Menu Navigation Right Side */
     .nav-menu {
       display: flex;
       list-style: none;
-      gap: 8px;
+      gap: 15px;
       align-items: center;
     }
 
     .nav-item {
-      position: relative; /* กำหนดเพื่อให้เมนูย่อย Dropdown อ้างอิงตำแหน่งได้ถูกต้อง */
+      position: relative;
     }
 
     .nav-link {
       text-decoration: none;
-      color: var(--text-dark);
+      color: var(--text-main);
       font-weight: 500;
       padding: 10px 16px;
       display: flex;
       align-items: center;
       gap: 6px;
-      border-radius: var(--radius-sm);
-      transition: var(--transition);
+      border-radius: 8px;
+      transition: all 0.2s ease;
       cursor: pointer;
     }
 
-    /* เปลี่ยนสีปุ่มเมนูเมื่อนำเมาส์ไปวาง (Hover) */
     .nav-link:hover {
       background-color: var(--primary-light);
       color: var(--primary-dark);
     }
 
-    /* 
-      1.5 DROPDOWN MENU (เมนูย่อยย่อยมุมขวาบน)
-      - ซ่อนไว้เป็นค่าเริ่มต้น (opacity: 0, visibility: hidden)
-      - เมื่อวางเมาส์ที่ .nav-item จะแสดงผลออกมาอย่างนุ่มนวล
-    */
+    /* Dropdown Submenu Layout for Future Expansion */
     .dropdown-menu {
       position: absolute;
       top: 100%;
-      right: 0; /* จัดให้อยู่ชิดขวาเพื่อรองรับหน้าจอทุกขนาด */
-      background: var(--white);
+      right: 0;
+      background-color: #ffffff;
       min-width: 220px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-      border-radius: var(--radius-sm);
+      border-radius: 8px;
       padding: 8px 0;
       list-style: none;
       border: 1px solid #e2e8f0;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(10px); /* สไลด์ลงเล็กน้อยเวลาแสดงผล */
-      transition: var(--transition);
+      transform: translateY(10px);
+      transition: all 0.25s ease;
     }
 
-    /* สั่งเปิดแสดงเมนูย่อยเมื่อเมาส์ชี้ที่เมนูหลัก */
     .nav-item:hover .dropdown-menu {
       opacity: 1;
       visibility: visible;
@@ -195,9 +135,9 @@
       display: block;
       padding: 10px 20px;
       text-decoration: none;
-      color: var(--text-dark);
+      color: var(--text-main);
       font-size: 14px;
-      transition: var(--transition);
+      transition: background 0.2s;
     }
 
     .dropdown-item a:hover {
@@ -205,15 +145,13 @@
       color: var(--primary-dark);
     }
 
-    /* 
-      1.6 HERO BANNER (แบนเนอร์กิจกรรมใหญ่ตรงกลาง)
-      - ใช้การไล่โทนสีฟ้า (Linear Gradient)
-    */
+    /* Banner Section */
     .hero-banner {
       background: linear-gradient(135deg, #1565c0 0%, #1e88e5 50%, #039be5 100%);
-      color: var(--white);
+      color: white;
       text-align: center;
-      padding: 60px 20px;
+      padding: 70px 20px;
+      box-shadow: inset 0 -10px 20px rgba(0,0,0,0.05);
     }
 
     .banner-badge {
@@ -221,68 +159,66 @@
       background: rgba(255, 255, 255, 0.2);
       padding: 6px 16px;
       border-radius: 20px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       margin-bottom: 15px;
+      backdrop-filter: blur(5px);
     }
 
     .hero-banner h1 {
-      font-size: 2.2rem;
-      margin-bottom: 10px;
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
     }
 
     .hero-banner p {
-      font-size: 1.05rem;
-      opacity: 0.9;
+      font-size: 1.1rem;
+      opacity: 0.95;
     }
 
-    /* 
-      1.7 SERVICES GRID (กล่องบริการออนไลน์ด้านล่าง)
-      - ใช้ CSS Grid เพื่อจัดเรียงกล่องอัตโนมัติ (Responsive)
-    */
-    .main-content {
-      margin-top: 40px;
-      margin-bottom: 50px;
+    /* Online Service Grid Section */
+    .services-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
     }
 
     .section-title {
+      font-size: 1.25rem;
+      color: var(--primary-dark);
+      margin-bottom: 25px;
       display: flex;
       align-items: center;
       gap: 10px;
-      color: var(--primary-dark);
-      margin-bottom: 25px;
     }
 
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
     }
 
     .service-card {
-      background: var(--white);
+      background: white;
       padding: 30px 20px;
-      border-radius: var(--radius-md);
+      border-radius: 12px;
       text-align: center;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
       border: 1px solid #e2e8f0;
-      transition: var(--transition);
-      text-decoration: none;
-      color: inherit;
-      display: block;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
-    /* เอฟเฟกต์ยกตัวกล่องขึ้นเมื่อเมาส์ชี้ */
     .service-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 24px rgba(30, 136, 229, 0.15);
-      border-color: var(--primary-main);
+      border-color: var(--primary);
     }
 
     .service-icon {
       width: 65px;
       height: 65px;
-      background: var(--primary-light);
-      color: var(--primary-main);
+      background-color: var(--primary-light);
+      color: var(--primary);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -294,195 +230,115 @@
     .service-title {
       font-weight: 600;
       font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .search-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- 
-    ==========================================================================
-    🏗️ SECTION 2: HTML STRUCTURE
-    โครงสร้างและองค์ประกอบหลักของหน้าเว็บ
-    ==========================================================================
-  -->
-
-  <!-- 2.1 แถบข้อความแจ้งเตือนด้านบนสุด -->
   <div class="top-bar">
-    <div class="container top-bar-content">
-      <span>#รวมพลังจิตอาสาพัฒนาสังคม</span>
-      <div class="top-bar-links">
-        <span><i class="fa-solid fa-phone"></i> ติดต่อเรา</span>
-      </div>
+    <span>#รวมพลังจิตอาสาพัฒนาสังคม</span>
+    <div style="display: flex; gap: 15px;">
+      <span><i class="fa-solid fa-phone"></i> ติดต่อเรา</span>
     </div>
   </div>
 
-  <!-- 2.2 แถบ Header & โลโก้ + พื้นที่วางเมนูดร็อปดาวน์มุมขวา -->
-  <header class="navbar">
-    <div class="container nav-container">
-      
-      <!-- โลโก้และชื่อระบบด้านซ้าย -->
+  <header>
+    <div class="nav-container">
       <a href="#" class="logo">
         <div class="logo-icon">
           <i class="fa-solid fa-hand-holding-heart"></i>
         </div>
-        <div class="logo-text">
-          <span class="title">จิตอาสา Smart</span>
-          <span class="subtitle">ระบบบริหารจัดการกิจกรรม</span>
-        </div>
+        <div>ศูนย์กิจกรรมจิตอาสา</div>
       </a>
 
-      <!-- 
-        พื้นที่สำหรับใส่เมนูด้านขวา ( id="navMenu" )
-        - ไม่ต้องเขียนโค้ดเมนูไว้ตรงนี้ เพราะ JavaScript จะดึงข้อมูลจาก Supabase
-        - แล้วสร้างรายการเมนูหลัก + เมนูย่อย มาวางใส่จุดนี้โดยอัตโนมัติ
-      -->
-      <nav>
-        <ul class="nav-menu" id="navMenu">
-          <li class="nav-item"><span class="nav-link">กำลังโหลดเมนู...</span></li>
-        </ul>
-      </nav>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link">หน้าหลัก</a>
+        </li>
+        
+        <li class="nav-item">
+          <div class="nav-link">
+            ข้อมูลองค์กร <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem;"></i>
+          </div>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="#">ประวัติความเป็นมา</a></li>
+            <li class="dropdown-item"><a href="#">โครงสร้างบริหาร</a></li>
+            </ul>
+        </li>
 
+        <li class="nav-item">
+          <div class="nav-link">
+            กิจกรรมจิตอาสา <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem;"></i>
+          </div>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="#">ปฏิทินกิจกรรม</a></li>
+            <li class="dropdown-item"><a href="#">สมัครเข้าร่วมกิจกรรม</a></li>
+            <li class="dropdown-item"><a href="#">เกียรติบัตรออนไลน์</a></li>
+            </ul>
+        </li>
+
+        <li class="nav-item">
+          <div class="nav-link">
+            ดาวน์โหลด & คลังความรู้ <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem;"></i>
+          </div>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item"><a href="#">เอกสารดาวน์โหลด</a></li>
+            <li class="dropdown-item"><a href="#">คู่มือจิตอาสา</a></li>
+            </ul>
+        </li>
+
+        <li>
+          <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </li>
+      </ul>
     </div>
   </header>
 
-  <!-- 2.3 ส่วนแบนเนอร์ประชาสัมพันธ์หลัก (Hero Banner) -->
   <section class="hero-banner">
-    <div class="container">
-      <div class="banner-badge">
-        <i class="fa-solid fa-shield-heart"></i> VOLUNTEER POLICY
-      </div>
-      <h1>ส่งเสริมวัฒนธรรมจิตอาสาและสังคมแห่งการแบ่งปัน</h1>
-      <p>ร่วมเป็นส่วนหนึ่งในการสร้างสรรค์สังคมยั่งยืน โปร่งใส และตรวจสอบได้</p>
-    </div>
+    <span class="banner-badge"><i class="fa-solid fa-shield-heart"></i> Volunteer Policy</span>
+    <h1>ส่งเสริมวัฒนธรรมจิตอาสาและสังคมแห่งการแบ่งปัน</h1>
+    <p>ร่วมเป็นส่วนหนึ่งในการสร้างสรรค์สังคมยั่งยืน โปร่งใส และตรวจสอบได้</p>
   </section>
 
-  <!-- 2.4 ส่วนบริการออนไลน์ (E-Services Grid) -->
-  <main class="main-content container">
+  <main class="services-container">
     <div class="section-title">
-      <i class="fa-solid fa-cubes"></i>
-      <h2>บริการออนไลน์ (Volunteer E-Services)</h2>
+      <i class="fa-solid fa-cubes" style="color: var(--primary);"></i>
+      <span>บริการออนไลน์ (Volunteer E-Service)</span>
     </div>
 
-    <!-- 
-      พื้นที่สำหรับวางกล่องการ์ดบริการ ( id="servicesGrid" )
-      - JavaScript จะดึงข้อมูลบริการจาก Supabase แล้วนำการ์ดมาวางสร้างตรงนี้ให้อัตโนมัติ
-    -->
-    <div class="services-grid" id="servicesGrid">
-      <div class="service-card"><p>กำลังโหลดข้อมูลบริการ...</p></div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <div class="service-title">ระบบสารสนเทศจิตอาสา</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fa-solid fa-people-group"></i>
+        </div>
+        <div class="service-title">กิจกรรมชุมชนจิตอาสา</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <div class="service-title">ระบบบันทึกชั่วโมงจิตอาสา</div>
+      </div>
     </div>
   </main>
 
-  <!-- 
-    ==========================================================================
-    ⚡ SECTION 3: JAVASCRIPT & SUPABASE INTEGRATION
-    ส่วนการประมวลผล สั่งงาน และดึงข้อมูลจาก Supabase มาแสดงใน HTML
-    ==========================================================================
-  -->
-  <script>
-    /*
-      3.1 ตั้งค่าการเชื่อมต่อฐานข้อมูล SUPABASE
-      - นำ URL และ ANON_KEY จากหน้า Supabase Dashboard > Settings > API มาวางแทนที่
-    */
-    const SUPABASE_URL = "https://iufzrllowhbnafyyiobr.supabase.co/rest/v1/";             
-    const SUPABASE_ANON_KEY = "sb_publishable_QVQZ2pGEmUt9qiyTxnvTfg_ixO9__pS" ;   
-
-    // เริ่มต้นเชื่อมต่อกับ Supabase
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    /*
-      3.2 ฟังก์ชันดึงข้อมูลเมนู (loadNavigation)
-      - ทำหน้าที่ดึงตาราง 'nav_menus' จาก Supabase
-      - แยกแยะว่าเมนูไหนเป็น "เมนูหลัก" และเมนูไหนเป็น "เมนูย่อย"
-      - สร้างโค้ด HTML เมนูดร็อปดาวน์ แล้วนำไปใส่ใน <ul id="navMenu">
-    */
-    async function loadNavigation() {
-      // ดึงข้อมูลตาราง nav_menus โดยเรียงตาม sort_order
-      const { data: menus, error } = await supabaseClient
-        .from('nav_menus')
-        .select('*')
-        .order('sort_order', { ascending: true });
-
-      const navMenuElement = document.getElementById('navMenu');
-
-      // หากมีปัญหา ดึงข้อมูลไม่ได้ ให้แสดงเมนูเริ่มต้นไว้ป้องกันเว็บพัง
-      if (error || !menus) {
-        console.error('Error loading navigation:', error);
-        navMenuElement.innerHTML = `<li class="nav-item"><a href="#" class="nav-link">หน้าหลัก</a></li>`;
-        return;
-      }
-
-      // 1. กรองหาเมนูหลัก (เมนูที่ parent_id เป็น null)
-      const mainMenus = menus.filter(item => item.parent_id === null);
-
-      // 2. วนลูปสร้าง HTML สำหรับแต่ละเมนู
-      navMenuElement.innerHTML = mainMenus.map(main => {
-        // หาเมนูย่อยของเมนูหลักนี้ (รายการที่มี parent_id เท่ากับ id ของเมนูหลัก)
-        const subMenus = menus.filter(sub => sub.parent_id === main.id);
-        const hasSubmenu = subMenus.length > 0;
-
-        return `
-          <li class="nav-item">
-            <a href="${main.url}" class="nav-link">
-              ${main.title}
-              /* ถ้ามีเมนูย่อย ให้ใส่ไอคอนลูกศรชี้ลง */
-              ${hasSubmenu ? '<i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>' : ''}
-            </a>
-            
-            /* ถ้ามีเมนูย่อย ให้สร้างรายการ <ul> ของเมนูดร็อปดาวน์ซ้อนไว้ */
-            ${hasSubmenu ? `
-              <ul class="dropdown-menu">
-                ${subMenus.map(sub => `
-                  <li class="dropdown-item">
-                    <a href="${sub.url}">${sub.title}</a>
-                  </li>
-                `).join('')}
-              </ul>
-            ` : ''}
-          </li>
-        `;
-      }).join('');
-    }
-
-    /*
-      3.3 ฟังก์ชันดึงข้อมูลกล่องบริการ (loadServices)
-      - ทำหน้าที่ดึงตาราง 'services' จาก Supabase
-      - นำข้อมูล เช่น ชื่อบริการ, ไอคอน, ลิงก์ มาสร้างเป็นกล่องบริการ (.service-card)
-      - แล้วส่งไปแสดงใน <div id="servicesGrid">
-    */
-    async function loadServices() {
-      // ดึงข้อมูลตาราง services เรียงตาม sort_order
-      const { data: services, error } = await supabaseClient
-        .from('services')
-        .select('*')
-        .order('sort_order', { ascending: true });
-
-      const servicesGridElement = document.getElementById('servicesGrid');
-
-      if (error || !services) {
-        console.error('Error loading services:', error);
-        servicesGridElement.innerHTML = `<p>ไม่สามารถโหลดข้อมูลบริการได้</p>`;
-        return;
-      }
-
-      // วนลูปสร้างกล่องบริการ HTML
-      servicesGridElement.innerHTML = services.map(item => `
-        <a href="${item.url}" class="service-card">
-          <div class="service-icon">
-            <i class="${item.icon}"></i>
-          </div>
-          <div class="service-title">${item.title}</div>
-        </a>
-      `).join('');
-    }
-
-    /*
-      3.4 สั่งประมวลผลเมื่อโหลดหน้าเว็บเสร็จสมบูรณ์
-      - เมื่อผู้ใช้เปิดหน้าเว็บ ระบบจะเรียกใช้ฟังก์ชันทั้งสองทันทีเพื่อแสดงข้อมูลล่าสุดจาก Supabase
-    */
-    document.addEventListener('DOMContentLoaded', () => {
-      loadNavigation();
-      loadServices();
-    });
-  </script>
 </body>
 </html>
